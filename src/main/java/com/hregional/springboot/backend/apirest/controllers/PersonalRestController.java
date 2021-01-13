@@ -41,7 +41,7 @@ public class PersonalRestController {
 	@GetMapping("/personal")
 	public List<Personal> index(){
 		
-		return personalService.findAll();
+		return personalService.findAllActiveEstado();
 	}
 	
 	@GetMapping("/personal/page/{page}")

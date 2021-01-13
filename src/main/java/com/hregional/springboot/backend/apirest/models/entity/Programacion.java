@@ -33,13 +33,8 @@ public class Programacion implements Serializable{
 	@Temporal(TemporalType.DATE)
 	private Date pro_fecha;
 	
-	@NotEmpty(message = "no puede estar vacio")
 	private String pro_hora_inicio;
-	
-	@NotEmpty(message = "no puede estar vacio")
-	private String pro_sigla;
-	
-	@NotEmpty(message = "no puede estar vacio")
+
 	private Integer pro_num_turno;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -48,9 +43,11 @@ public class Programacion implements Serializable{
 	private Consultorio consultorio;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="per_codigo")
+	@JoinColumn(name="usu_codigo")
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
-	private Personal personal;
+	private Usuario usuario;
+	
+	private Boolean pro_estado;
 
 	public Long getPro_codigo() {
 		return pro_codigo;
@@ -92,20 +89,24 @@ public class Programacion implements Serializable{
 		this.consultorio = consultorio;
 	}
 
-	public String getPro_sigla() {
-		return pro_sigla;
+
+	public Usuario getUsuario() {
+		return usuario;
 	}
 
-	public void setPro_sigla(String pro_sigla) {
-		this.pro_sigla = pro_sigla;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
-	public Personal getPersonal() {
-		return personal;
+	public Boolean getPro_estado() {
+		return pro_estado;
 	}
 
-	public void setPersonal(Personal personal) {
-		this.personal = personal;
+	public void setPro_estado(Boolean pro_estado) {
+		this.pro_estado = pro_estado;
 	}
+
+	
+	
 	
 }

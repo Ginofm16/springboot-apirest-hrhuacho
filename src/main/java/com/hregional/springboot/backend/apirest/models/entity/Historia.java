@@ -55,9 +55,6 @@ public class Historia implements Serializable{
 	@NotEmpty(message = "no puede estar vacio")
 	private String his_genero;
 	
-	@NotEmpty(message = "no puede estar vacio")
-	private String his_gra_estudio;
-	
 	private Boolean his_estado;
 	
 	@NotNull(message="el pais no puede ser vacia")
@@ -66,6 +63,10 @@ public class Historia implements Serializable{
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	private Pais pais;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="est_codigo")
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+	private Estudio estudio;
 
 	public Long getHis_codigo() {
 		return his_codigo;
@@ -139,14 +140,6 @@ public class Historia implements Serializable{
 		this.his_genero = his_genero;
 	}
 
-	public String getHis_gra_estudio() {
-		return his_gra_estudio;
-	}
-
-	public void setHis_gra_estudio(String his_gra_estudio) {
-		this.his_gra_estudio = his_gra_estudio;
-	}
-
 	public Boolean getHis_estado() {
 		return his_estado;
 	}
@@ -161,6 +154,14 @@ public class Historia implements Serializable{
 
 	public void setPais(Pais pais) {
 		this.pais = pais;
+	}
+
+	public Estudio getEstudio() {
+		return estudio;
+	}
+
+	public void setEstudio(Estudio estudio) {
+		this.estudio = estudio;
 	}
 
 	

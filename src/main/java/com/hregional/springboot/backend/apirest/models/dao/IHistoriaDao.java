@@ -16,8 +16,11 @@ public interface IHistoriaDao extends JpaRepository<Historia, Long>{
 	public List<Pais> findAllPais();
 	
 	@Query("from Historia h where h.his_estado = true")
-	public Page<Historia> findAllActive(Pageable pageable);
+	public Page<Historia> findAllActivePageable(Pageable pageable, String n);
 	 
+	@Query("from Historia h where h.his_estado = true")
+	public List<Historia> findAllActive();
+	
 	@Query("select h from Historia h where concat(h.his_ape_paterno,' ',h.his_ape_materno) like ?1%")
 	public List<Historia> findByPaciente(String term);
 }

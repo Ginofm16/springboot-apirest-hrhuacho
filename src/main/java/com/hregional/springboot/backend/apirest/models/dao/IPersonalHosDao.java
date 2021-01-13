@@ -16,6 +16,9 @@ public interface IPersonalHosDao extends JpaRepository<Personal, Long> {
 	@Query("from Personal p where p.per_estado = true")
 	public Page<Personal> findAllActive(Pageable pageable);
 	
+	@Query("from Personal p where p.per_estado = true")
+	public List<Personal> findAllActiveEstado();
+	
 	@Query("from Categoria")
 	public List<Categoria> findAllCategoria();
 	

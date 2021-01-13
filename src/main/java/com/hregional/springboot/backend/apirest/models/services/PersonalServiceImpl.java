@@ -73,5 +73,12 @@ public class PersonalServiceImpl implements IPersonalHosService{
 		return personalDao.findAllEspecialidad();
 	}
 
+	@Override
+	public List<Personal> findAllActiveEstado() {
+		// TODO Auto-generated method stub
+		return personalDao.findAllActiveEstado();
+	}
+
+
 
 }

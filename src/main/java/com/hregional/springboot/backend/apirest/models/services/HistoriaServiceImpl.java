@@ -61,16 +61,23 @@ public class HistoriaServiceImpl implements IHistoriaService {
 		return historiaDao.findAllPais();
 	}
 
-	@Override
-	public Page<Historia> findAllActive(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return historiaDao.findAllActive(pageable);
-	}
 
 	@Override
 	public List<Historia> findByPaciente(String term) {
 		// TODO Auto-generated method stub
 		return historiaDao.findByPaciente(term);
+	}
+
+	@Override
+	public List<Historia> findAllActive() {
+		// TODO Auto-generated method stub
+		return historiaDao.findAllActive();
+	}
+
+	@Override
+	public Page<Historia> findAllActivePageable(Pageable pageable, String n) {
+		// TODO Auto-generated method stub
+		return historiaDao.findAllActivePageable(pageable, "n");
 	}
 
 }

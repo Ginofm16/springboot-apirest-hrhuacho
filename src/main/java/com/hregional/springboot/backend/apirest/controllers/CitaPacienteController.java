@@ -1,5 +1,9 @@
 package com.hregional.springboot.backend.apirest.controllers;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,35 +29,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hregional.springboot.backend.apirest.models.entity.Consultorio;
-import com.hregional.springboot.backend.apirest.models.entity.Personal;
-import com.hregional.springboot.backend.apirest.models.entity.Programacion;
-import com.hregional.springboot.backend.apirest.models.services.IProgramacionService;
+import com.hregional.springboot.backend.apirest.models.entity.CitaPaciente;
+import com.hregional.springboot.backend.apirest.models.entity.CitaPaciente;
+import com.hregional.springboot.backend.apirest.models.services.ICitaPacienteService;
 
 @CrossOrigin(origins= {"http://localhost:4200"})
 @RestController
 @RequestMapping("/api")
-public class ProgramacionRestController {
-	
+public class CitaPacienteController {
+
 	@Autowired
-	private IProgramacionService programacionService;
+	private ICitaPacienteService citaPacienteService;
 	
-	@GetMapping("/programacion")
-	public List<Programacion> index(){
+	
+	@GetMapping("/citaPaciente")
+	public List<CitaPaciente> index(){
 		
-		return programacionService.findAllActive();
+		return citaPacienteService.findAllActive();
 	}
+
 	
-	@GetMapping("/programacion/page/{page}")
-	public Page<Programacion> index(@PathVariable Integer page){
-		Pageable pageable = PageRequest.of(page, 4);
-		return programacionService.findAll(pageable);
-	}
-	
-	@GetMapping("/programacion/{id}")
+	@GetMapping("/citaPaciente/{id}")
 	public ResponseEntity<?> show(@PathVariable Long id) {
 		
-		Programacion programacion = null;
+		CitaPaciente citaPaciente = null;
 		/*Map es la interface y HashMap la implementacion. Map, va estar asociado a nombres(String),
 		 * con sus valores(Object)*/
 		Map<String, Object> response = new HashMap<>();
@@ -61,7 +60,7 @@ public class ProgramacionRestController {
 		/*try, para manejar error de sql, acceso, conexion, cualquier problema que se genere
 		 * en el servidor con la base de datos*/
 		try {
-			 programacion = programacionService.findById(id);
+			 citaPaciente = citaPacienteService.findById(id);
 			
 		} catch(DataAccessException e) {
 			response.put("mensaje", "Error al realizar la consulta en la base de datos");
@@ -72,24 +71,26 @@ public class ProgramacionRestController {
 		
 		
 		
-		if(programacion == null) {
+		if(citaPaciente == null) {
 			/*si es null entonces podemos crear y retornar el ResponseEntity con el mensaje de error
 			 * pero para eso se tiene q contar con una MAP de java, un tipo map, que almacene 
 			 * objetos y valores asociados a un nombre y le asignamos el mensaje de error*/
-			response.put("mensaje", "La programacion ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+			response.put("mensaje", "La citaPaciente ID: ".concat(id.toString().concat(" no existe en la base de datos")));
 			//el estado cuando se presente el erroe de not_found sera el, 404
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		
 		/*1er parametro sera el contenido que se va guardar en el cuerpo de la respuesta(ResponseBody).
 		  2do param. es el estado de la respuesta http, seria un httpStatus, el estado seria el 200*/
-		return new ResponseEntity<Programacion>(programacion, HttpStatus.OK);
+		return new ResponseEntity<CitaPaciente>(citaPaciente, HttpStatus.OK);
 	}
 
-	@PostMapping("/programacion")
-	public ResponseEntity<?> create(@Valid @RequestBody Programacion programacion, BindingResult result) {
-		System.out.println("programacion::::::::::");
-		Programacion programacionNew = null;
+	@PostMapping("/citaPaciente")
+	public ResponseEntity<?> create(@Valid @RequestBody CitaPaciente citaPaciente, BindingResult result) {
+
+		LocalDateTime ahora= LocalDateTime.now();
+		
+		CitaPaciente citaPacienteNew = null;
 		Map<String, Object> response = new HashMap<>();
 		
 		/*evaluando si contiene errores*/
@@ -109,7 +110,8 @@ public class ProgramacionRestController {
 		
 		try {
 			
-			programacionNew=programacionService.save(programacion);
+			//citaPaciente.setCit_fec_registro(hourdateFormat.format(date).);
+			citaPacienteNew=citaPacienteService.save(citaPaciente);
 		} catch(DataAccessException e) {
 		
 		response.put("mensaje", "Error al realizar el insert en la base de datos");
@@ -118,19 +120,17 @@ public class ProgramacionRestController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		response.put("mensaje","La programacion ha sido creado con éxito");
-		response.put("programacion", programacionNew);
+		response.put("mensaje","La citaPaciente ha sido creado con éxito");
+		response.put("citaPaciente", citaPacienteNew);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
-	@PutMapping("/programacion/{id}")
-	public ResponseEntity<?> update(@Valid @RequestBody Programacion programacion, BindingResult result, @PathVariable Long id) {
+	@PutMapping("/citaPaciente/{id}")
+	public ResponseEntity<?> update(@Valid @RequestBody CitaPaciente citaPaciente, BindingResult result, @PathVariable Long id) {
+			
+		CitaPaciente citaPacienteActual = citaPacienteService.findById(id);
 		
-		System.out.println("UPDATEEEEEEEEEEEEEEE");
-		
-		Programacion programacionActual = programacionService.findById(id);
-		
-		Programacion programacionUpdated = null;
+		CitaPaciente citaPacienteUpdated = null;
 		Map<String, Object> response = new HashMap<>();
 		
 		/*evaluando si contiene errores*/
@@ -146,20 +146,21 @@ public class ProgramacionRestController {
 		}
 		
 		
-		if(programacionActual == null) {
-			response.put("mensaje", "Error: no se puede editar, la programacion ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+		if(citaPacienteActual == null) {
+			response.put("mensaje", "Error: no se puede editar, la citaPaciente ID: ".concat(id.toString().concat(" no existe en la base de datos")));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		
 		try {
 	
-		programacionActual.setPro_fecha(programacion.getPro_fecha());
-		programacionActual.setPro_hora_inicio(programacionActual.getPro_hora_inicio());
-		programacionActual.setPro_num_turno(programacion.getPro_num_turno());
-		programacionActual.setUsuario(programacion.getUsuario());
-		programacionActual.setConsultorio(programacion.getConsultorio());
-		programacionActual.setPro_estado(programacion.getPro_estado());
-		programacionUpdated = programacionService.save(programacionActual);
+		citaPacienteActual.setCit_exoneracion(citaPaciente.getCit_exoneracion());
+		citaPacienteActual.setCit_costo_total(citaPacienteActual.getCit_costo_total());
+		citaPacienteActual.setCit_fec_registro(citaPaciente.getCit_fec_registro());
+		citaPacienteActual.setHistoria(citaPaciente.getHistoria());
+		citaPacienteActual.setProgramacion(citaPaciente.getProgramacion());
+		citaPacienteActual.setUsuario(citaPaciente.getUsuario());
+		citaPacienteActual.setCit_estado(citaPaciente.getCit_estado());
+		citaPacienteUpdated = citaPacienteService.save(citaPacienteActual);
 		
 		} catch(DataAccessException e) {
 			
@@ -168,49 +169,29 @@ public class ProgramacionRestController {
 			
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		response.put("mensaje","La programación ha sido actualizado con éxito");
-		response.put("programacion", programacionUpdated);
+		response.put("mensaje","La cita ha sido actualizado con éxito");
+		response.put("citaPaciente", citaPacienteUpdated);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
-	@DeleteMapping("/programacion/{id}")
+	@DeleteMapping("/citaPaciente/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		
 		Map<String, Object> response = new HashMap<>();
 		
 		try {
 		
-			programacionService.delete(id);
+			citaPacienteService.delete(id);
 			
 		} catch(DataAccessException e) {
 			
-			response.put("mensaje", "Error al eliminar la programacion en la base de datos");
+			response.put("mensaje", "Error al eliminar la cita en la base de datos");
 			response.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		response.put("mensaje","La programacion ha sido eliminado con éxito!");
+		response.put("mensaje","La cita ha sido eliminado con éxito!");
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 	
-	@GetMapping("/programacion/personal")
-	public List<Personal> listarPersonal(){
-		return programacionService.findAllPersonal();
-	}
-	
-	@GetMapping("/programacion/consultorio")
-	public List<Consultorio> listarConsultorio(){
-		return programacionService.findAllConsultorio();
-	}
-	
-	@GetMapping("/programacion/page/{page}/codigo/{codigo}")
-	public List<Programacion> findAllProgramacionByConsultorio(@PathVariable Integer page, @PathVariable String codigo){
-		Pageable pageable = PageRequest.of(page, 4);
-		return programacionService.findAllProgramacionByConsultorio(pageable,codigo);
-	}
-	
-	@GetMapping("/programacion/consultorio/{codigo}")
-	public List<Programacion> findAllProgramacionByConsul(@PathVariable Long codigo){
-		return programacionService.findAllProgramacionByConsul(codigo);
-	}
 }

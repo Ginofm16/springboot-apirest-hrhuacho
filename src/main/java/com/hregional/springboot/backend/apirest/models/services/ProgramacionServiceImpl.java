@@ -35,9 +35,9 @@ public class ProgramacionServiceImpl implements IProgramacionService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<Programacion> findAllActive(Pageable pageable) {
+	public Page<Programacion> findAllActivePageable(Pageable pageable) {
 		// TODO Auto-generated method stub
-		return null;
+		return programacionDao.findAllActivePageable(pageable);
 	}
 
 	@Override
@@ -71,10 +71,21 @@ public class ProgramacionServiceImpl implements IProgramacionService {
 	}
 
 	@Override
-	public List<Programacion> findAllProgramacionByConsultorio(Long cod) {
+	public List<Programacion> findAllProgramacionByConsultorio(Pageable pageable, String codigo) {
 		// TODO Auto-generated method stub
-		
-		return programacionDao.findAllProgramacionByConsultorio(cod);
+		return programacionDao.findAllProgramacionByConsultorio(pageable, codigo);
+	}
+	
+	@Override
+	public List<Programacion> findAllProgramacionByConsul(Long codigo) {
+		// TODO Auto-generated method stub
+		return programacionDao.findAllProgramacionByConsul(codigo);
+	}
+
+	@Override
+	public List<Programacion> findAllActive() {
+		// TODO Auto-generated method stub
+		return programacionDao.findAllActive();
 	}
 
 }

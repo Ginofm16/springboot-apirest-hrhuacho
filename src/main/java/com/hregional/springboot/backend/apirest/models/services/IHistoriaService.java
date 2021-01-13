@@ -16,7 +16,9 @@ public List<Historia> findAll();
 	 * de pagina y la cantidad de pagina a mostrar, que retorna un Page<>, similar al list pero atraves de rangos*/
 	public Page<Historia> findAll(Pageable pageable);
 	
-	public Page<Historia> findAllActive(Pageable pageable);
+	public Page<Historia> findAllActivePageable(Pageable pageable, String n);
+
+	public List<Historia> findAllActive();
 	
 	public Historia findById(Long id);
 	

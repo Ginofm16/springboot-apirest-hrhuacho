@@ -43,22 +43,24 @@ public class HistoriaRestController {
 	@GetMapping("/historias")
 	public List<Historia> index(){
 		
-		return historiaService.findAll();
+		return historiaService.findAllActive();
 	}
 
-	@GetMapping("/historias/page/{page}")
+	/*@GetMapping("/historias/page/{page}")
 	public Page<Historia> index(@PathVariable Integer page){
 		Pageable pageable = PageRequest.of(page, 4);
 		return historiaService.findAll(pageable);
 	}
+	*/
 	
-	/*
+	
 	//mostrando lista de historia con estado activo
-	@GetMapping("/historias/page/{page}")
-	public Page<Historia> index(@PathVariable Integer page){
+	@GetMapping("/historias/page/{page}/codigo/{codigo}")
+	public Page<Historia> index(@PathVariable Integer page, @PathVariable String codigo){
 		Pageable pageable = PageRequest.of(page, 4);
-		return historiaService.findAllActive(pageable);
-	}*/
+		System.out.println("COOOOODIGGGOOOOO "+ codigo);
+		return historiaService.findAllActivePageable(pageable,"n");
+	}
 	
 	@Secured({"ROLE_ADMIN","ROLE_INFORMATICO","ROLE_TECNICO"})
 	@GetMapping("/historias/{id}")
@@ -161,7 +163,6 @@ public class HistoriaRestController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
 		
-		
 		if(historiaActual == null) {
 			response.put("mensaje", "Error: no se puede editar, el Historia ID: ".concat(id.toString().concat(" no existe en la base de datos")));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
@@ -178,7 +179,7 @@ public class HistoriaRestController {
 		historiaActual.setHis_fec_nacimiento(historia.getHis_fec_nacimiento());
 		historiaActual.setHis_seguro(historia.getHis_seguro());
 		historiaActual.setHis_genero(historia.getHis_genero());
-		historiaActual.setHis_gra_estudio(historia.getHis_gra_estudio());
+		historiaActual.setEstudio(historia.getEstudio());
 		historiaActual.setPais(historia.getPais());
 		historiaActual.setHis_estado(historia.getHis_estado());
 		historiaUpdated = historiaService.save(historiaActual);

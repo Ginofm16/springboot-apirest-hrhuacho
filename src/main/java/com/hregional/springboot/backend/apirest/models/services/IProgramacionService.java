@@ -15,7 +15,9 @@ public List<Programacion> findAll();
 	
 	public Page<Programacion> findAll(Pageable pageable);
 	
-	public Page<Programacion> findAllActive(Pageable pageable);
+	public Page<Programacion> findAllActivePageable(Pageable pageable);
+	
+	public List<Programacion> findAllActive();
 	
 	public Programacion findById(Long id);
 	
@@ -27,6 +29,8 @@ public List<Programacion> findAll();
 	
 	public List<Consultorio> findAllConsultorio();
 	
-	public List<Programacion> findAllProgramacionByConsultorio(Long cod);
+	public List<Programacion> findAllProgramacionByConsultorio(Pageable pageable, String codigo);
+	
+	public List<Programacion> findAllProgramacionByConsul(Long codigo);
 
 }

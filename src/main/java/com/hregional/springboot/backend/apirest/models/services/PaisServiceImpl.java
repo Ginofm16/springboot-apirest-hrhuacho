@@ -2,6 +2,8 @@ package com.hregional.springboot.backend.apirest.models.services;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hregional.springboot.backend.apirest.models.dao.IPaisDao;
 import com.hregional.springboot.backend.apirest.models.entity.Pais;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 public class PaisServiceImpl implements IPaisService {
+	
 
 	@Autowired
 	/*inyectar el paisDao*/
@@ -22,6 +27,7 @@ public class PaisServiceImpl implements IPaisService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Pais> findAll() {
+		
 		
 		return (List<Pais>) paisDao.findAll();
 	}

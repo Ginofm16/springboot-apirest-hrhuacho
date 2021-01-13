@@ -17,6 +17,8 @@ public interface IPersonalHosService {
 	
 	public Page<Personal> findAllActive(Pageable pageable);
 	
+	public List<Personal> findAllActiveEstado();
+	
 	public Personal findById(Long id);
 	
 	public Personal save(Personal personal);
