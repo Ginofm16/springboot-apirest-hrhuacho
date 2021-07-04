@@ -33,4 +33,8 @@ public interface IProgramacionDao extends JpaRepository<Programacion, Long> {
 	@Query("SELECT p from Programacion p JOIN p.consultorio c where c.con_codigo = ?1")
 	public List<Programacion> findAllProgramacionByConsul(Long codigo);
 	
+	@Query("select p from Programacion p JOIN p.consultorio c where c.con_nombre like ?1%")
+	public List<Programacion> findByProgramacion(String term);
+
+	
 }

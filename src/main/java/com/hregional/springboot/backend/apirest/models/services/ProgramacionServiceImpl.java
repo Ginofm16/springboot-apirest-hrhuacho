@@ -88,4 +88,10 @@ public class ProgramacionServiceImpl implements IProgramacionService {
 		return programacionDao.findAllActive();
 	}
 
+	@Override
+	public List<Programacion> findProgramacionByConsul(String consultorio) {
+		// TODO Auto-generated method stub
+		return programacionDao.findByProgramacion(consultorio);
+	}
+
 }

@@ -32,5 +32,7 @@ public List<Programacion> findAll();
 	public List<Programacion> findAllProgramacionByConsultorio(Pageable pageable, String codigo);
 	
 	public List<Programacion> findAllProgramacionByConsul(Long codigo);
+	
+	public List<Programacion> findProgramacionByConsul(String consultorio);
 
 }

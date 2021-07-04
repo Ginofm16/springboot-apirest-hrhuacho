@@ -213,4 +213,9 @@ public class ProgramacionRestController {
 	public List<Programacion> findAllProgramacionByConsul(@PathVariable Long codigo){
 		return programacionService.findAllProgramacionByConsul(codigo);
 	}
+	
+	@GetMapping("/programacion/pro-consultorio/{consultorio}")
+	public List<Programacion> findProgramacionByConsul(@PathVariable String consultorio){
+		return programacionService.findProgramacionByConsul(consultorio);
+	}
 }

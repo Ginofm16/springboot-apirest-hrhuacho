@@ -155,7 +155,7 @@ public class CitaPacienteController {
 	
 		citaPacienteActual.setCit_exoneracion(citaPaciente.getCit_exoneracion());
 		citaPacienteActual.setCit_costo_total(citaPacienteActual.getCit_costo_total());
-		citaPacienteActual.setCit_fec_registro(citaPaciente.getCit_fec_registro());
+		//citaPacienteActual.setCit_fec_registro(citaPaciente.getCit_fec_registro());
 		citaPacienteActual.setHistoria(citaPaciente.getHistoria());
 		citaPacienteActual.setProgramacion(citaPaciente.getProgramacion());
 		citaPacienteActual.setUsuario(citaPaciente.getUsuario());
