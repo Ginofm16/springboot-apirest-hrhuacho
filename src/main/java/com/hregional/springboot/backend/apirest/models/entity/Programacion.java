@@ -24,29 +24,34 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Programacion implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long pro_codigo;
-	
+
 	@NotNull(message = "no puede estar vacio")
 	@Temporal(TemporalType.DATE)
 	private Date pro_fecha;
-	
+
 	private String pro_hora_inicio;
 
 	private Integer pro_num_turno;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="con_codigo")
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	private Consultorio consultorio;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="usu_codigo")
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	private Usuario usuario;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="usu_codigo_medico")
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+	private Usuario usuario_medico;
+
 	private Boolean pro_estado;
 
 	public Long getPro_codigo() {
@@ -106,7 +111,11 @@ public class Programacion implements Serializable{
 		this.pro_estado = pro_estado;
 	}
 
-	
-	
-	
+	public Usuario getUsuario_medico() {
+		return usuario_medico;
+	}
+
+	public void setUsuario_medico(Usuario usuario_medico) {
+		this.usuario_medico = usuario_medico;
+	}
 }
