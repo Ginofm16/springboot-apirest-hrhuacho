@@ -48,8 +48,14 @@ public class Consultorio implements Serializable  {
 	public void setCon_precio(Double con_precio) {
 		this.con_precio = con_precio;
 	}
-	
-	
-	
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("Consultorio{");
+		sb.append("con_codigo=").append(con_codigo);
+		sb.append(", con_nombre='").append(con_nombre).append('\'');
+		sb.append(", con_precio=").append(con_precio);
+		sb.append('}');
+		return sb.toString();
+	}
 }

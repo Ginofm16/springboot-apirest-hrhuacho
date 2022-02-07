@@ -175,12 +175,13 @@ public class HistoriaRestController {
 		historiaActual.setHis_ape_paterno(historia.getHis_ape_paterno());
 		historiaActual.setHis_ape_materno(historia.getHis_ape_materno());
 		historiaActual.setHis_direccion(historia.getHis_direccion());
-		historiaActual.setHis_dni(historia.getHis_dni());
+		historiaActual.setHis_documento(historia.getHis_documento());
 		historiaActual.setHis_fec_nacimiento(historia.getHis_fec_nacimiento());
 		historiaActual.setHis_seguro(historia.getHis_seguro());
 		historiaActual.setHis_genero(historia.getHis_genero());
 		historiaActual.setEstudio(historia.getEstudio());
 		historiaActual.setPais(historia.getPais());
+		historiaActual.setTipo_documento(historia.getTipo_documento());
 		historiaActual.setHis_estado(historia.getHis_estado());
 		historiaUpdated = historiaService.save(historiaActual);
 		

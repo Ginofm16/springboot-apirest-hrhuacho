@@ -39,7 +39,7 @@ public class Historia implements Serializable{
 	private String his_ape_materno;
 	
 	@NotEmpty(message = "no puede estar vacio")
-	private String his_dni;
+	private String his_documento;
 	
 	@NotEmpty(message = "no puede estar vacio")
 	private String his_direccion;
@@ -67,6 +67,11 @@ public class Historia implements Serializable{
 	@JoinColumn(name="est_codigo")
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	private Estudio estudio;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "doc_codigo")
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+	private TipoDocumento tipo_documento;
 
 	public Long getHis_codigo() {
 		return his_codigo;
@@ -100,12 +105,12 @@ public class Historia implements Serializable{
 		this.his_ape_materno = his_ape_materno;
 	}
 
-	public String getHis_dni() {
-		return his_dni;
+	public String getHis_documento() {
+		return his_documento;
 	}
 
-	public void setHis_dni(String his_dni) {
-		this.his_dni = his_dni;
+	public void setHis_documento(String his_documento) {
+		this.his_documento = his_documento;
 	}
 
 	public String getHis_direccion() {
@@ -164,7 +169,31 @@ public class Historia implements Serializable{
 		this.estudio = estudio;
 	}
 
-	
-	
+	public TipoDocumento getTipo_documento() {
+		return tipo_documento;
+	}
 
+	public void setTipo_documento(TipoDocumento tipo_documento) {
+		this.tipo_documento = tipo_documento;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("Historia{");
+		sb.append("his_codigo=").append(his_codigo);
+		sb.append(", his_nombre='").append(his_nombre).append('\'');
+		sb.append(", his_ape_paterno='").append(his_ape_paterno).append('\'');
+		sb.append(", his_ape_materno='").append(his_ape_materno).append('\'');
+		sb.append(", his_documento='").append(his_documento).append('\'');
+		sb.append(", his_direccion='").append(his_direccion).append('\'');
+		sb.append(", his_fec_nacimiento=").append(his_fec_nacimiento);
+		sb.append(", his_seguro='").append(his_seguro).append('\'');
+		sb.append(", his_genero='").append(his_genero).append('\'');
+		sb.append(", his_estado=").append(his_estado);
+		sb.append(", pais=").append(pais);
+		sb.append(", estudio=").append(estudio);
+		sb.append(", tipo_documento=").append(tipo_documento);
+		sb.append('}');
+		return sb.toString();
+	}
 }

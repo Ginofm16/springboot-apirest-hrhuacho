@@ -18,7 +18,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
-/*anotacion para habiltar la configuracion del AuthorizationServer*/
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
@@ -34,56 +33,40 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Autowired
 	private InfoAdiconalToken infoAdiconalToken;
 
+	/*2.3. configurar permisos de los endpoints, de la ruta de accesos de springsecurity oauth2*/
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-		
+		/*permitAll() para realizar el login*/
 		security.tokenKeyAccess("permitAll()")
 		.checkTokenAccess("isAuthenticated()");
 		
 	}
 
+	/*2.2. configurar el cliente, la aplicaciones, que van acceder al api rest, en este caso
+	* solo seria uno, el angular que estoy implementando.
+	* Tambien configuracion sobre el token*/
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory().withClient("angularapp")
 		.secret(passwordEncoder.encode("12345"))
 		.scopes("read","write")
 		.authorizedGrantTypes("password", "refresh_token")
-		/*metodo para especificar el tiempo de valides del token, en cuanto tiempo va caducar el token(se mide en segundos)*/
 		.accessTokenValiditySeconds(3600)
-		/*configurar el tiempo de expiracion del refresh_token.
-		 *Entonces agtraves de un refreshToken que es un GrantTypes(tipo de concesion) podemos 
-		 *obtener un token de acceso completamente renovado sin tener que volver a iniciar
-		 *sesion.*/
 		.refreshTokenValiditySeconds(3600);
 	}
 
+	/*2.1. Se encarga de tdo el proceso de autenticar y validar el token, cada vez que se inicie sesion se envia
+	* el usuario y contraseña y si tod sale bien genera el token y se le entrega al usuario*/
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		/*4to, se registra el componente InfoAdicionalToken, para hacerlo se tiene que crear una instancia
-		 del tokenEnhancerChain que es una cadena que va unir tanto la informacion del token por defecto con
-		 esta nueva informacion adicional*/
+
 		TokenEnhancerChain tokenEnhacerChain = new TokenEnhancerChain();
 		tokenEnhacerChain.setTokenEnhancers(Arrays.asList(infoAdiconalToken, accessTokenConverter()));
-		
-		/*1ero, registrar el authenticationManager*/
+
 		endpoints.authenticationManager(authenticationManager)
-		/*2do paso es registrar accessTokenConverter, es un componente que se tiene que implementar,
-		 * es el encargado de manejar varias cosas relacionadas al token, al J2EE, como por ejm
-		 * almacenar los datos de autentificacion del usuario, users, roles, cualquier otra informacion, etc.*/
 		.accessTokenConverter(accessTokenConverter())
-		/*por debajo el endpoint, trabaja con tokenStore, por ende el invocarlo aca es opcional porque
-		 * si nos fijamos en el codigo fuente de AuthorizationServerEndpointsConfigurer ya cuenta con 
-		 * un metodo que devuelve el TokenStore, que si no lo hemos implementado aca, internamente
-		 * evalua que si accessTokenConverter es una instancia de JwtAccessTokenConverter, si es asi
-		 * va crear el JwtTokenStore. O tambien lo podemos implementar aca de manera explicita*/
 		.tokenStore(tokenStore())
-		/*asignar el nuevo token con informacion adicional*/
 		.tokenEnhancer(tokenEnhacerChain);
-	}
-	
-	@Bean
-	public JwtTokenStore tokenStore() {
-		return new JwtTokenStore(accessTokenConverter());
 	}
 
 	/*metodo que por debajo trabaja con toda la implementacion del token JWT para tarducir toda la ifnormacion y
@@ -92,12 +75,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter() {
 		JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-		/*SigningKey, es el que firma el token, el jwt, y el que firma es la llave privada*/
 		jwtAccessTokenConverter.setSigningKey(JwtConfig.RSA_PRIVADA);
-		/*y el que valida y verifica que el token sea autentico es la publica*/
 		jwtAccessTokenConverter.setVerifierKey(JwtConfig.RSA_PUBLICA);
 		return jwtAccessTokenConverter;
 	}
-	
-	
+
+	@Bean
+	public JwtTokenStore tokenStore() {
+		return new JwtTokenStore(accessTokenConverter());
+	}
 }

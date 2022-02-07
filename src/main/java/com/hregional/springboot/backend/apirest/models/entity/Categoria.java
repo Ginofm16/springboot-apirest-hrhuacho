@@ -50,7 +50,14 @@ public class Categoria  implements Serializable{
 	public void setCat_estado(Boolean cat_estado) {
 		this.cat_estado = cat_estado;
 	}
-	
-	
-	
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("Categoria{");
+		sb.append("cat_codigo=").append(cat_codigo);
+		sb.append(", cat_nombre='").append(cat_nombre).append('\'');
+		sb.append(", cat_estado=").append(cat_estado);
+		sb.append('}');
+		return sb.toString();
+	}
 }

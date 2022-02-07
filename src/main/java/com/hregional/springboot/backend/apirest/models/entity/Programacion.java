@@ -118,4 +118,19 @@ public class Programacion implements Serializable{
 	public void setUsuario_medico(Usuario usuario_medico) {
 		this.usuario_medico = usuario_medico;
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("Programacion{");
+		sb.append("pro_codigo=").append(pro_codigo);
+		sb.append(", pro_fecha=").append(pro_fecha);
+		sb.append(", pro_hora_inicio='").append(pro_hora_inicio).append('\'');
+		sb.append(", pro_num_turno=").append(pro_num_turno);
+		sb.append(", consultorio=").append(consultorio);
+		sb.append(", usuario=").append(usuario);
+		sb.append(", usuario_medico=").append(usuario_medico);
+		sb.append(", pro_estado=").append(pro_estado);
+		sb.append('}');
+		return sb.toString();
+	}
 }

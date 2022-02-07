@@ -43,6 +43,14 @@ public class Especialidad {
 	public void setEsp_estado(Boolean esp_estado) {
 		this.esp_estado = esp_estado;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("Especialidad{");
+		sb.append("esp_codigo=").append(esp_codigo);
+		sb.append(", esp_nombre='").append(esp_nombre).append('\'');
+		sb.append(", esp_estado=").append(esp_estado);
+		sb.append('}');
+		return sb.toString();
+	}
 }

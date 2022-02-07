@@ -18,8 +18,6 @@ import com.hregional.springboot.backend.apirest.models.services.IUsuarioService;
 @Component
 public class InfoAdiconalToken implements TokenEnhancer{
 
-	//@Autowired
-	//private IPersonalService personalService;
 	@Autowired
 	private IUsuarioService usuarioService;
 	
@@ -27,7 +25,6 @@ public class InfoAdiconalToken implements TokenEnhancer{
 	@Override
 	public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
 
-		//Personal personal = personalService.findByUsername(authentication.getName());
 		Usuario usuario = usuarioService.findByUsername(authentication.getName());
 		
 		Personal personal = usuarioService.findByUsuario(usuario.getUsu_codigo());
@@ -35,21 +32,16 @@ public class InfoAdiconalToken implements TokenEnhancer{
 		Role role = usuarioService.findByUsuarioRole(usuario.getUsu_codigo());
 		
 		Map<String, Object> info = new HashMap<>();
-		info.put("info_adicional", "Hola que tal, ".concat(authentication.getName()));
 		
 		info.put("cod_user", usuario.getUsu_codigo());
 		info.put("username", authentication.getName());
 		info.put("nombre", personal.getPer_nombre());
 		info.put("apellido_paterno", personal.getPer_ape_paterno());
 		info.put("apellido_materno", personal.getPer_ape_materno());
-		info.put("dni", personal.getPer_dni());
+		info.put("documento", personal.getPer_documento());
 		info.put("rol_codigo", role.getRol_codigo());
 		info.put("rol_nombre", role.getRol_nombre());
-		
-		/*asignando el info al accessToken*/
-		/*accessToken, aca es del tipo de la interface, y esta interface no tiene el metodo que
-		 * se requiere, para ello realizamos un cast a la clase DefaultOAuth2AccessToken que
-		 * implementa OAuth2AccessToken*/
+
 		((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
 		
 		return accessToken;

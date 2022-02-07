@@ -2,6 +2,8 @@ package com.hregional.springboot.backend.apirest.models.services;
 
 import java.util.List;
 
+import com.hregional.springboot.backend.apirest.models.entity.TipoDocumento;
+import com.hregional.springboot.backend.apirest.models.entity.UsuarioRegistro;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -28,5 +30,12 @@ public interface IPersonalHosService {
 	public List<Categoria> findAllCategoria();
 	
 	public List<Especialidad> findAllEspecialidad();
-	
+
+	public List<TipoDocumento> findAllTipoDocumento();
+
+	public Boolean findByCorreo(String correo);
+
+	public Boolean findByUsuarioPersonal(String username);
+
+	public UsuarioRegistro updatePersonalCredenciales(UsuarioRegistro usuarioRegistro);
 }

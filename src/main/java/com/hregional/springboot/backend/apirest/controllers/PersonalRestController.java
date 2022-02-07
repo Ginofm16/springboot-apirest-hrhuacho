@@ -6,7 +6,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.xml.ws.Response;
 
+import com.hregional.springboot.backend.apirest.models.entity.TipoDocumento;
+import com.hregional.springboot.backend.apirest.models.entity.UsuarioRegistro;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -14,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,6 +41,8 @@ import com.hregional.springboot.backend.apirest.models.services.IPersonalHosServ
 @RequestMapping("/api")
 public class PersonalRestController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(PersonalRestController.class);
+
 	@Autowired
 	private IPersonalHosService personalService;
 	
@@ -43,13 +51,19 @@ public class PersonalRestController {
 		
 		return personalService.findAllActiveEstado();
 	}
+
+	@GetMapping("/personal-all")
+	public List<Personal> indexAll(){
+		return personalService.findAll();
+	}
 	
 	@GetMapping("/personal/page/{page}")
 	public Page<Personal> index(@PathVariable Integer page){
 		Pageable pageable = PageRequest.of(page, 4);
 		return personalService.findAll(pageable);
 	}
-	
+
+	@Secured({"ROLE_ADMIN","ROLE_INFORMATICO","ROLE_TECNICO"})
 	@GetMapping("/personal/{id}")
 	public ResponseEntity<?> show(@PathVariable Long id){
 		
@@ -78,10 +92,12 @@ public class PersonalRestController {
 		
 		return new ResponseEntity<Personal>(personal, HttpStatus.OK);
 	}
-	
+
+	@Secured({"ROLE_ADMIN","ROLE_INFORMATICO"})
 	@PostMapping("/personal")
 	public ResponseEntity<?> create(@Valid @RequestBody Personal personal, BindingResult result){
-		
+		LOGGER.info("::::::Controller create:::::");
+		LOGGER.info(personal.toString());
 		Personal personalNew = null;
 		Map<String, Object> response = new HashMap<>();
 		
@@ -112,11 +128,16 @@ public class PersonalRestController {
 		response.put("personal", personalNew);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-	
+
+	@Secured({"ROLE_ADMIN","ROLE_INFORMATICO"})
 	@PutMapping("/personal/{id}")
 	public ResponseEntity<?> update(@Valid @RequestBody Personal personal, BindingResult result, @PathVariable Long id){
-		
+
+		LOGGER.info("::::::::::::::::ENTRANDO METODO update:::::::::::::");
+		LOGGER.info("::::::::::::::::Personal::::::::::::: {}", personal);
+
 		Personal personalActual = personalService.findById(id);
+		LOGGER.info("::::::::::::::::personalActual::::::::::::: {}", personalActual);
 		Personal personalUpdated = null;
 		Map<String, Object> response = new HashMap<>();
 		
@@ -139,17 +160,23 @@ public class PersonalRestController {
 			personalActual.setPer_nombre(personal.getPer_nombre());
 			personalActual.setPer_ape_paterno(personal.getPer_ape_paterno());
 			personalActual.setPer_ape_materno(personal.getPer_ape_materno());
-			personalActual.setPer_dni(personal.getPer_dni());
+			personalActual.setPer_documento(personal.getPer_documento());
 			personalActual.setPer_direccion(personal.getPer_direccion());
 			personalActual.setPer_telefono(personal.getPer_telefono());
 			personalActual.setPer_rne(personal.getPer_rne());
 			personalActual.setPer_fec_ingreso(personal.getPer_fec_ingreso());
 			personalActual.setPer_fec_salida(personal.getPer_fec_salida());
+			personalActual.setPer_correo(personal.getPer_correo());
 			personalActual.setUsername(personal.getUsername());
 			personalActual.setPassword(personal.getPassword());
 			personalActual.setCategoria(personal.getCategoria());
+			personalActual.setTipo_documento(personal.getTipo_documento());
 			personalActual.setEspecialidad(personal.getEspecialidad());
+			personalActual.setPais(personal.getPais());
+			personalActual.setPer_estado(personal.getPer_estado());
+			LOGGER.info(":::::::::personalActual::::::: {}", personalActual);
 			personalUpdated = personalService.save(personalActual);
+			LOGGER.info(":::::::::personalUpdated::::::: {}", personalUpdated);
 			
 		} catch(DataAccessException e) {
 			
@@ -159,10 +186,11 @@ public class PersonalRestController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		response.put("mensaje","El Personal ha sido actualizado con éxito");
-		response.put("historia", personalUpdated);
+		response.put("personal", personalUpdated);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
-	
+
+	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping("/personal/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		
@@ -192,5 +220,93 @@ public class PersonalRestController {
 	public List<Especialidad> listarEspecialidad(){
 		return personalService.findAllEspecialidad();
 	}
-	
+
+	@GetMapping("/personal/tipo-documento")
+	public List<TipoDocumento> listarTipoDocumento(){
+		return personalService.findAllTipoDocumento();
+	}
+
+	@GetMapping("/personal/personal-correo/{correo}")
+	public ResponseEntity<?> obtenerPersonalCorreo(@Valid @PathVariable String correo){
+		LOGGER.info("::::::::::obtenerPersonalCorreo()::::::::: {}", correo);
+		String result;
+		String mensaje;
+		Map<String, Object> response = new HashMap<>();
+
+		try{
+			if(personalService.findByCorreo(correo)){
+				result = "EXISTE";
+				mensaje = "Existe el correo: "+correo;
+			}else{
+				result = "NO_EXISTE";
+				mensaje = "No se tiene registrado el correo: "+correo;
+				response.put("mensaje", mensaje);
+				response.put("result", result);
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}catch (DataAccessException e){
+			response.put("mensaje", "Error al obtener el personal por correo");
+			response.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		response.put("mensaje",mensaje);
+		response.put("result",result);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/personal/personal-usuario/{usuario}")
+	public ResponseEntity<?> obtenerPersonalUsuario(@Valid @PathVariable String usuario){
+		LOGGER.info("::::::::::obtenerPersonalUsuario()::::::::: {}", usuario);
+		Personal personal = null;
+		String result;
+		String mensaje;
+		Map<String, Object> response = new HashMap<>();
+
+		try{
+			if(personalService.findByUsuarioPersonal(usuario)){
+				result = "EXISTE";
+				mensaje = "Ya existe el usuario "+usuario;
+				response.put("mensaje", mensaje);
+				response.put("result", result);
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			}else{
+				result = "NO_EXISTE";
+				mensaje = "No se tiene registrado a el usuario: "+usuario;
+
+			}
+		}catch (DataAccessException e){
+			response.put("mensaje", "Error al obtener el personal por usuario");
+			response.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		}
+
+		response.put("mensaje",mensaje);
+		response.put("result",result);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+	}
+
+	@PostMapping("/personal/actualizar-usuario")
+	public ResponseEntity<?> actualizarPersonalUsuario(@Valid @RequestBody UsuarioRegistro usuarioRegistro){
+		LOGGER.info(":::::actualizarPersonalUsuario method:::::::::");
+		LOGGER.info(":::::actualizarPersonalUsuario method::::::::: {}", usuarioRegistro);
+		Map<String, Object> response = new HashMap<>();
+		UsuarioRegistro responseUsuario;
+		try{
+			if (usuarioRegistro == null){
+				response.put("mensaje", "UsuarioRegistro enviado es nulo");
+				return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+			}
+			responseUsuario = personalService.updatePersonalCredenciales(usuarioRegistro);
+
+		}catch (DataAccessException e){
+			response.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			response.put("mensaje", "Error al consultar a la base de datos");
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		response.put("mensaje", "Se realizó el registro del usuario ".concat(responseUsuario.getUsuario()));
+		response.put("usuarioRegistro", usuarioRegistro);
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 }

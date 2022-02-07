@@ -90,7 +90,16 @@ public class Usuario implements Serializable {
 	public void setUsu_estado(Boolean usu_estado) {
 		this.usu_estado = usu_estado;
 	}
-	
-	
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("Usuario{");
+		sb.append("usu_codigo=").append(usu_codigo);
+		sb.append(", usu_fec_registro=").append(usu_fec_registro);
+		sb.append(", role=").append(role);
+		sb.append(", personal=").append(personal);
+		sb.append(", usu_estado=").append(usu_estado);
+		sb.append('}');
+		return sb.toString();
+	}
 }

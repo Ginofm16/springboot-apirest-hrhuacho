@@ -22,6 +22,10 @@ import com.hregional.springboot.backend.apirest.models.entity.Personal;
 import com.hregional.springboot.backend.apirest.models.entity.Role;
 import com.hregional.springboot.backend.apirest.models.entity.Usuario;
 
+/*UserDetailsService, interface que la provee SpringSecurity es una interface propia para trabajar con
+* JPA o cualquier otro proveedor para implementar el proceso de login, el proceso de autenticacion*/
+/*Luego de terminar esto se tiene que registrar este servicio en el autenticationManager(SpringSecurityConfig) para que se pueda
+* realizar el proceso de autenticacion utilizando JPA(lo implementado de usuario y sus roles)*/
 @Service
 public class UsuarioService implements IUsuarioService, UserDetailsService {
 

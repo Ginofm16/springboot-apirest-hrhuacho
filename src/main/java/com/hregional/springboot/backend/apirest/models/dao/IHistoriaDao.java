@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import com.hregional.springboot.backend.apirest.models.entity.Historia;
 import com.hregional.springboot.backend.apirest.models.entity.Pais;
 
+/*JpaRepository a diferencia de CrudRepository nos proporciona unas funcionalidades adicionales como
+* paginar y ordenamiento*/
 public interface IHistoriaDao extends JpaRepository<Historia, Long>{
 
 	@Query("from Pais")

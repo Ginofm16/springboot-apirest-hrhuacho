@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name="TB_PERSONAL")
+@Table(name="tb_personal")
 public class Personal implements Serializable{
 	
 
@@ -34,33 +34,33 @@ public class Personal implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long per_codigo;
-	
+
 	@NotEmpty(message = "no puede estar vacio")
 	private String per_nombre;
-	
+
 	@NotEmpty(message = "no puede estar vacio")
 	private String per_ape_paterno;
-	
+
 	@NotEmpty(message = "no puede estar vacio")
 	private String per_ape_materno;
-	
+
 	@NotEmpty(message = "no puede estar vacio")
-	private String per_dni;
-	
+	private String per_documento;
+
 	@NotEmpty(message = "no puede estar vacio")
 	private String per_direccion;
-	
+
 	@NotEmpty(message = "no puede estar vacio")
 	private String per_telefono;
-	
-	@NotEmpty(message = "no puede estar vacio")
+
+	private String per_correo;
+
 	private String per_rne;
-	
+
 	@NotNull(message = "no puede estar vacio")
 	@Temporal(TemporalType.DATE)
 	private Date per_fec_ingreso;
-	
-	@NotNull(message = "no puede estar vacio")
+
 	@Temporal(TemporalType.DATE)
 	private Date per_fec_salida;
 	
@@ -79,7 +79,16 @@ public class Personal implements Serializable{
 	@JoinColumn(name="esp_codigo")
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	private Especialidad especialidad;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "doc_codigo")
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+	private TipoDocumento tipo_documento;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pais_codigo")
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+	private Pais pais;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(name="tb_usuario", joinColumns = @JoinColumn(name="per_codigo"), 
@@ -95,51 +104,57 @@ public class Personal implements Serializable{
 		return per_codigo;
 	}
 
-
 	public void setPer_codigo(Long per_codigo) {
 		this.per_codigo = per_codigo;
 	}
 
+	public Pais getPais() {
+		return pais;
+	}
+
+	public void setPais(Pais pais) {
+		this.pais = pais;
+	}
 
 	public String getPer_nombre() {
 		return per_nombre;
 	}
 
-
 	public void setPer_nombre(String per_nombre) {
 		this.per_nombre = per_nombre;
 	}
-
 
 	public String getPer_ape_paterno() {
 		return per_ape_paterno;
 	}
 
-
 	public void setPer_ape_paterno(String per_ape_paterno) {
 		this.per_ape_paterno = per_ape_paterno;
 	}
-
 
 	public String getPer_ape_materno() {
 		return per_ape_materno;
 	}
 
-
 	public void setPer_ape_materno(String per_ape_materno) {
 		this.per_ape_materno = per_ape_materno;
 	}
 
-
-	public String getPer_dni() {
-		return per_dni;
+	public String getPer_correo() {
+		return per_correo;
 	}
 
-
-	public void setPer_dni(String per_dni) {
-		this.per_dni = per_dni;
+	public void setPer_correo(String per_correo) {
+		this.per_correo = per_correo;
 	}
 
+	public String getPer_documento() {
+		return per_documento;
+	}
+
+	public void setPer_documento(String per_documento) {
+		this.per_documento = per_documento;
+	}
 
 	public String getPer_direccion() {
 		return per_direccion;
@@ -239,6 +254,13 @@ public class Personal implements Serializable{
 		this.roles = roles;
 	}
 
+	public TipoDocumento getTipo_documento() {
+		return tipo_documento;
+	}
+
+	public void setTipo_documento(TipoDocumento tipo_documento) {
+		this.tipo_documento = tipo_documento;
+	}
 
 	public Boolean getPer_estado() {
 		return per_estado;
@@ -248,7 +270,30 @@ public class Personal implements Serializable{
 	public void setPer_estado(Boolean per_estado) {
 		this.per_estado = per_estado;
 	}
-	
-	
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("Personal{");
+		sb.append("per_codigo=").append(per_codigo);
+		sb.append(", per_nombre='").append(per_nombre).append('\'');
+		sb.append(", per_ape_paterno='").append(per_ape_paterno).append('\'');
+		sb.append(", per_ape_materno='").append(per_ape_materno).append('\'');
+		sb.append(", per_documento='").append(per_documento).append('\'');
+		sb.append(", per_direccion='").append(per_direccion).append('\'');
+		sb.append(", per_telefono='").append(per_telefono).append('\'');
+		sb.append(", per_correo='").append(per_correo).append('\'');
+		sb.append(", per_rne='").append(per_rne).append('\'');
+		sb.append(", per_fec_ingreso=").append(per_fec_ingreso);
+		sb.append(", per_fec_salida=").append(per_fec_salida);
+		sb.append(", username='").append(username).append('\'');
+		sb.append(", password='").append(password).append('\'');
+		sb.append(", categoria=").append(categoria);
+		sb.append(", especialidad=").append(especialidad);
+		sb.append(", tipo_documento=").append(tipo_documento);
+		sb.append(", pais=").append(pais);
+		sb.append(", roles=").append(roles);
+		sb.append(", per_estado=").append(per_estado);
+		sb.append('}');
+		return sb.toString();
+	}
 }

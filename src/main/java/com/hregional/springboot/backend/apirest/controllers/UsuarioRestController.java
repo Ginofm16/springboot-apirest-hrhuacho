@@ -65,9 +65,6 @@ public class UsuarioRestController {
 		}
 		
 		if(usuario == null) {
-			/*si es null entonces podemos crear y retornar el ResponseEntity con el mensaje de error
-			 * pero para eso se tiene q contar con una MAP de java, un tipo map, que almacene 
-			 * objetos y valores asociados a un nombre y le asignamos el mensaje de error*/
 			response.put("mensaje", "La historia ID: ".concat(id.toString().concat(" no existe en la base de datos")));
 			//el estado cuando se presente el erroe de not_found sera el, 404
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);

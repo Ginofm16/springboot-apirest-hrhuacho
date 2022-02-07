@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -38,10 +40,11 @@ import com.hregional.springboot.backend.apirest.models.services.ICitaPacienteSer
 @RequestMapping("/api")
 public class CitaPacienteController {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(CitaPacienteController.class);
+
 	@Autowired
 	private ICitaPacienteService citaPacienteService;
-	
-	
+
 	@GetMapping("/citaPaciente")
 	public List<CitaPaciente> index(){
 		
@@ -118,11 +121,13 @@ public class CitaPacienteController {
 		response.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 		
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e){
+			LOGGER.info(e.getMessage()+" - "+ e.getCause().getMessage());
 		}
 		
 		response.put("mensaje","La citaPaciente ha sido creado con éxito");
 		response.put("citaPaciente", citaPacienteNew);
-		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/citaPaciente/{id}")

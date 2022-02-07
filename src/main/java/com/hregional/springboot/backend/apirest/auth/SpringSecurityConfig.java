@@ -32,7 +32,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 		auth.userDetailsService(this.usuarioService).passwordEncoder(passwordEncoder());
 	}
 
-	/*@Bean, registra el objeto en el contenedor de spring con el nombre authenticationManager*/
+	/*@Bean, registra el objeto en el contenedor de spring con el nombre authenticationManager.
+	* Se crea este bean porque es necesario en la clase AuthorizationServerConfig*/
 	@Bean
 	@Override
 	protected AuthenticationManager authenticationManager() throws Exception {
@@ -43,15 +44,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-		/*esta linea siempre se pone al final de todas las reglas, para todas esas rutas(endpoints)
-		 * que tenemos pero no hemos asignado una regla aun.*/
 		.anyRequest().authenticated()
 		.and()
 		.csrf().disable()
-		/*deshabilitar el manejor de sesion en la autentificacion por el lado de spring security, lo
-		 * dejaremos sin estado, sin stateless, ya que se va trabajar con token, a diferencia cuando
-		 * se trabaja con aplicacion spring mvc donde sta todo incluido el frontend y el backend dentro
-		 * del mismo poryecto con spring donde toda la autentificacion de los usuarios es atraves de sesiones*/
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 

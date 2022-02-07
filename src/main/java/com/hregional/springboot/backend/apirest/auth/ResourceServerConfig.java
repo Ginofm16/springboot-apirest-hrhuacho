@@ -20,12 +20,19 @@ import org.springframework.web.filter.CorsFilter;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 
 	/*metodo que va permitir implementar todas la reglas de seguridad de nuestros empoints, de nuestras rutas
-	 * hacia los recursos de nuestra aplicacion, por ejemplo que si se quide dar permiso a todos al listado
-	 * del clientes o que solo los admin pueda realizar el crear, eliminar y modificar*/
+	 * hacia los recursos de nuestra aplicacion.
+	 * Por el lado de oauth2. Tamabien se tiene que hace algo como esto por el lado de Spring (SpringSecutiryConfig)*/
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/historias","/api/historias/page/**").permitAll()
+		http.authorizeRequests()
+				.antMatchers(HttpMethod.GET,
+						"/api/historias",
+						"/api/historias/page/**").permitAll()
 		.antMatchers(HttpMethod.GET,"/api/historias/filtrar-historias/{term}").permitAll()
+				.antMatchers(HttpMethod.GET,
+						"/api/personal/personal-correo/{correo}",
+						"/api/personal/personal-usuario/{usuario}").permitAll()
+				.antMatchers(HttpMethod.POST, "/api/personal/actualizar-usuario").permitAll()
 		.anyRequest().authenticated()
 		.and().cors().configurationSource(corsConfigurationSource());
 	}
@@ -35,17 +42,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-		/*OPTIONS, es porque ne algunos navegadores cuando se envia una solictud para autentificar 
-		 * y solictar el tokena la ruta OAuthToken ese request, esa petecion, lo envia como OPTIONS;
-		 * o tambien de parametro del asList podria ir con un solo astisco ("*")*/
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		config.setAllowCredentials(true);
 		config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
-		
-		/*Ahora se tiene que registrar esta configuracion Cors para todas las rutas, todos los endpoints del
-		 * backend*/
+
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		/* "/**", se indica que sera para todas la rutas del backend*/
 		source.registerCorsConfiguration("/**", config);
 		return source;
 	}
@@ -56,9 +57,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	 *  cada ves que se quiera validar el token*/
 	@Bean
 	public FilterRegistrationBean<CorsFilter> corsFilter(){
-		/*basicamente, se creo un filtro de cors, que a ese filtro se le pasa toda la configuracion 
-		 * realizada en corsConfigurationSource(). CON ESTO YA QUEDA CONFIGURADO COMPLETAMENTE TANTO
-		 * POR EL LADO DE SPRING SECURITY COMO TAMBIEN PO EL LADO DE OAUTH2*/
 		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(corsConfigurationSource()));
 		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 		return bean;
