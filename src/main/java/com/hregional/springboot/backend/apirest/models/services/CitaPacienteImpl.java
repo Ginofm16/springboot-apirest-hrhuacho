@@ -1,5 +1,6 @@
 package com.hregional.springboot.backend.apirest.models.services;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,5 +69,11 @@ public class CitaPacienteImpl implements ICitaPacienteService {
 		// TODO Auto-generated method stub
 		citaPacienteDao.deleteById(id);
 	}
+
+	@Override
+	public List<CitaPaciente> findAllByConsultorio(Date date, Long cod_consultorio) {
+		return citaPacienteDao.findAllByConsultorio(date, cod_consultorio);
+	}
+
 
 }

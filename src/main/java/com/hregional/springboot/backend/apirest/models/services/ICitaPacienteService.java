@@ -1,5 +1,6 @@
 package com.hregional.springboot.backend.apirest.models.services;
 
+import java.util.Date;
 import java.util.List;
 
 import com.hregional.springboot.backend.apirest.models.entity.CitaPaciente;
@@ -16,5 +17,7 @@ public interface ICitaPacienteService {
 	public CitaPaciente save(CitaPaciente citaPaciente);
 	
 	public void delete(Long id);
+
+	public List<CitaPaciente> findAllByConsultorio(Date date, Long cod_consultorio);
 	
 }

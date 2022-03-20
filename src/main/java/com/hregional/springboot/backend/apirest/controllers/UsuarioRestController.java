@@ -60,13 +60,12 @@ public class UsuarioRestController {
 		}catch(DataAccessException e) {
 			response.put("mensaje", "Error al realizar la consulta en la base de datos");
 			response.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			//el estado cuando se presente el error, al ser un error en la base de datos seria de codigo 500
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		if(usuario == null) {
 			response.put("mensaje", "La historia ID: ".concat(id.toString().concat(" no existe en la base de datos")));
-			//el estado cuando se presente el erroe de not_found sera el, 404
+
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		

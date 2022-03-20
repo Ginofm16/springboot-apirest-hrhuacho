@@ -29,8 +29,7 @@ public class CitaPaciente implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long cit_codigo;
-	
-	@NotNull(message = "no puede estar vacio")
+
 	private Double cit_exoneracion;
 	
 	@NotNull(message = "no puede estar vacio")

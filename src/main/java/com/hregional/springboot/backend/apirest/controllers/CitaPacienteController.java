@@ -1,9 +1,12 @@
 package com.hregional.springboot.backend.apirest.controllers;
 
+import java.sql.Date;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,6 +200,18 @@ public class CitaPacienteController {
 		}
 		response.put("mensaje","La cita ha sido eliminado con éxito!");
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/cita-paciente/consultorio/{codigo}/fecha/{fecha}")
+	public List<CitaPaciente> listCitaMedicaPorConsultorio(@PathVariable Long codigo, @PathVariable String fecha) throws ParseException {
+		String fech = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		LocalDate localD = LocalDate.parse(fecha);
+
+		SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+//		LOGGER.info("FECHA: {}",String.valueOf(fecha));
+		LOGGER.info("FECHA: {}",localD);
+		//"2022-02-11"
+		return citaPacienteService.findAllByConsultorio(Date.valueOf(localD),codigo);
 	}
 	
 }

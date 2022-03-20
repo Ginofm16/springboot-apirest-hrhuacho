@@ -31,7 +31,6 @@ import com.hregional.springboot.backend.apirest.models.entity.Historia;
 import com.hregional.springboot.backend.apirest.models.entity.Pais;
 import com.hregional.springboot.backend.apirest.models.services.IHistoriaService;
 
-//http://localhost:4200, dominio de angular
 @CrossOrigin(origins= {"http://localhost:4200"})
 @RestController
 @RequestMapping("/api")
@@ -46,19 +45,9 @@ public class HistoriaRestController {
 		return historiaService.findAllActive();
 	}
 
-	/*@GetMapping("/historias/page/{page}")
-	public Page<Historia> index(@PathVariable Integer page){
-		Pageable pageable = PageRequest.of(page, 4);
-		return historiaService.findAll(pageable);
-	}
-	*/
-	
-	
-	//mostrando lista de historia con estado activo
 	@GetMapping("/historias/page/{page}/codigo/{codigo}")
 	public Page<Historia> index(@PathVariable Integer page, @PathVariable String codigo){
 		Pageable pageable = PageRequest.of(page, 4);
-		System.out.println("COOOOODIGGGOOOOO "+ codigo);
 		return historiaService.findAllActivePageable(pageable,"n");
 	}
 	
@@ -67,77 +56,50 @@ public class HistoriaRestController {
 	public ResponseEntity<?> show(@PathVariable Long id) {
 		
 		Historia historia = null;
-		/*Map es la interface y HashMap la implementacion. Map, va estar asociado a nombres(String),
-		 * con sus valores(Object)*/
 		Map<String, Object> response = new HashMap<>();
-		
-		/*try, para manejar error de sql, acceso, conexion, cualquier problema que se genere
-		 * en el servidor con la base de datos*/
+
 		try {
 			 historia = historiaService.findById(id);
 			
 		} catch(DataAccessException e) {
 			response.put("mensaje", "Error al realizar la consulta en la base de datos");
 			response.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			//el estado cuando se presente el error, al ser un error en la base de datos seria de codigo 500
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		
-		
+
 		if(historia == null) {
-			/*si es null entonces podemos crear y retornar el ResponseEntity con el mensaje de error
-			 * pero para eso se tiene q contar con una MAP de java, un tipo map, que almacene 
-			 * objetos y valores asociados a un nombre y le asignamos el mensaje de error*/
 			response.put("mensaje", "La historia ID: ".concat(id.toString().concat(" no existe en la base de datos")));
-			//el estado cuando se presente el erroe de not_found sera el, 404
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
-		
-		/*1er parametro sera el contenido que se va guardar en el cuerpo de la respuesta(ResponseBody).
-		  2do param. es el estado de la respuesta http, seria un httpStatus, el estado seria el 200*/
+
 		return new ResponseEntity<Historia>(historia, HttpStatus.OK);
 	}
 	
 	@Secured("ROLE_ADMIN")
 	@PostMapping("/historias")
-	/*Historia (del parametro), como viene en formato JSON dentro del cuerpo de la peticion del
-	   request, entonces aca tenemos que indicar que es un @RequestBody.
-	 * Se configura para que antes de entrar al metodo create se tiene que validar y lo hacemos atraves
-	   de un interceptor de spring que intercepta el objeto Historia y valida cada valor, cada atributo,
-	   del @RequestBody que esta enviando angular que esta enviando en una estructura json, la que se 
-	   traduce a la clase Historia. Todo ello se indica con la anotacion @Valid,luego se tiene que inyectar 
-	   al metodo el objeto que contiene el mensaje de error*/
 	public ResponseEntity<?> create(@Valid @RequestBody Historia historia, BindingResult result) {
-		
 		Historia historiaNew = null;
 		Map<String, Object> response = new HashMap<>();
 		
 		/*evaluando si contiene errores*/
 		if(result.hasErrors()) {
-			
-			/* para el manejo de errores de validacion*/
 			List<String> errors = result.getFieldErrors()
-					//convertir la lista de FieldErrors en un stream, apartir de este flujo, de stream....
 					.stream()
 					.map(err -> "EL campo "+ err.getField()+"' " +err.getDefaultMessage())
 					.collect(Collectors.toList());
 			
 			response.put("errors", errors);
-			/*bad_request, es un error para validacion, de codigo 400*/
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}
 		
 		try {
 			historiaNew=historiaService.save(historia);
 		} catch(DataAccessException e) {
-		
 		response.put("mensaje", "Error al realizar el insert en la base de datos");
 		response.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 		
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
 		response.put("mensaje","El Historia ha sido creado con éxito");
 		response.put("historia", historiaNew);
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
@@ -169,7 +131,6 @@ public class HistoriaRestController {
 		}
 		
 		try {
-		/*Historia, sera el Historia que contiene los datos que se quieren cambiar*/
 		
 		historiaActual.setHis_nombre(historia.getHis_nombre());
 		historiaActual.setHis_ape_paterno(historia.getHis_ape_paterno());
