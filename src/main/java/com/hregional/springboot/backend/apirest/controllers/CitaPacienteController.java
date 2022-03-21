@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.hregional.springboot.backend.apirest.models.services.IReporteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -47,6 +49,9 @@ public class CitaPacienteController {
 
 	@Autowired
 	private ICitaPacienteService citaPacienteService;
+
+	@Autowired
+	private IReporteService reporteService;
 
 	@GetMapping("/citaPaciente")
 	public List<CitaPaciente> index(){
@@ -213,5 +218,12 @@ public class CitaPacienteController {
 		//"2022-02-11"
 		return citaPacienteService.findAllByConsultorio(Date.valueOf(localD),codigo);
 	}
-	
+
+	@GetMapping(value = "/generar-reporte", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<byte[]> generarReporte(){
+		byte[] data = null;
+		data = reporteService.generarReporte();
+		return new ResponseEntity<byte[]>(data, HttpStatus.OK);
+
+	}
 }
